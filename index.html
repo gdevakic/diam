@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUMINARY — Modern Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --charcoal: #1A1A1A;
+    --warm-brown: #8B6B47;
+    --gold: #C9A84C;
+    --light-gold: #E8D5A3;
+    --soft-gray: #E8E4DC;
+    --white: #FFFFFF;
+    --error: #C0392B;
+    --success: #27AE60;
+    --text-muted: #888;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    overflow-x: hidden;
+  }
+
+  /* ─── PAGE SYSTEM ─── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ─── NAVBAR ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.2rem 3rem;
+    background: rgba(245,240,232,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 900; letter-spacing: 0.08em;
+    color: var(--charcoal); cursor: pointer;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold); }
+
+  .nav-links {
+    display: flex; gap: 2.5rem; list-style: none; align-items: center;
+  }
+  .nav-links li a, .nav-links li button {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--charcoal);
+    background: none; border: none; cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links li a:hover, .nav-links li button:hover { color: var(--gold); }
+
+  .cart-btn {
+    position: relative;
+    background: var(--charcoal) !important;
+    color: var(--cream) !important;
+    padding: 0.6rem 1.4rem !important;
+    border-radius: 2px !important;
+    letter-spacing: 0.1em;
+    transition: background 0.2s !important;
+  }
+  .cart-btn:hover { background: var(--warm-brown) !important; }
+  .cart-count {
+    position: absolute; top: -8px; right: -8px;
+    background: var(--gold); color: var(--charcoal);
+    width: 20px; height: 20px; border-radius: 50%;
+    font-size: 0.65rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+  }
+  .hero-text {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 5rem 4rem 5rem 5rem;
+  }
+  .hero-eyebrow {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--warm-brown);
+    margin-bottom: 1.5rem;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    font-weight: 900; line-height: 1.05;
+    margin-bottom: 1.5rem;
+  }
+  .hero-title em { font-style: italic; color: var(--warm-brown); }
+  .hero-sub {
+    font-size: 1rem; font-weight: 300; color: #666;
+    line-height: 1.7; max-width: 400px; margin-bottom: 2.5rem;
+  }
+  .hero-actions { display: flex; gap: 1rem; align-items: center; }
+  .btn-primary {
+    background: var(--charcoal); color: var(--cream);
+    padding: 0.9rem 2.2rem; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: all 0.25s; text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { background: var(--warm-brown); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent; color: var(--charcoal);
+    padding: 0.9rem 2.2rem;
+    border: 1.5px solid var(--charcoal); cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; transition: all 0.25s; text-decoration: none;
+    display: inline-block;
+  }
+  .btn-outline:hover { background: var(--charcoal); color: var(--cream); }
+
+  .hero-visual {
+    background: linear-gradient(135deg, #D4C4A0 0%, #B8A882 50%, #8B7355 100%);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+  }
+  .hero-visual-inner {
+    text-align: center; color: rgba(255,255,255,0.8);
+  }
+  .hero-visual-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 8rem; font-weight: 900;
+    opacity: 0.15; letter-spacing: -0.02em;
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+  }
+  .hero-product-cards {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1rem; padding: 2rem; position: relative; z-index: 1;
+  }
+  .mini-card {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 4px; padding: 1.2rem; text-align: center;
+  }
+  .mini-card-icon { font-size: 2.5rem; margin-bottom: 0.4rem; }
+  .mini-card-name {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(255,255,255,0.9);
+  }
+
+  /* ─── SECTION ─── */
+  section { padding: 6rem 5rem; }
+  .section-label {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.35em;
+    text-transform: uppercase; color: var(--warm-brown);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
+    font-weight: 900; margin-bottom: 3rem;
+  }
+
+  /* ─── PRODUCT GRID ─── */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+  .product-card {
+    background: var(--white);
+    border: 1px solid var(--soft-gray);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+  .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.12); }
+  .product-img {
+    height: 260px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5rem;
+    position: relative; overflow: hidden;
+  }
+  .product-badge {
+    position: absolute; top: 1rem; left: 1rem;
+    background: var(--gold); color: var(--charcoal);
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 0.3rem 0.7rem;
+  }
+  .product-info { padding: 1.5rem; }
+  .product-cat {
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--warm-brown);
+    margin-bottom: 0.4rem;
+  }
+  .product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;
+  }
+  .product-desc { font-size: 0.82rem; color: #888; line-height: 1.6; margin-bottom: 1.2rem; }
+  .product-footer { display: flex; justify-content: space-between; align-items: center; }
+  .product-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 700;
+  }
+  .add-to-cart {
+    background: var(--charcoal); color: var(--cream);
+    border: none; padding: 0.6rem 1.2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .add-to-cart:hover { background: var(--warm-brown); }
+  .add-to-cart.added { background: var(--success); }
+
+  /* ─── CART PAGE ─── */
+  .page-header {
+    background: var(--charcoal); color: var(--cream);
+    padding: 8rem 5rem 4rem;
+  }
+  .page-header .section-label { color: var(--gold); }
+  .page-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem; font-weight: 900;
+  }
+
+  .cart-layout {
+    display: grid; grid-template-columns: 1fr 380px;
+    gap: 3rem; padding: 4rem 5rem; align-items: start;
+  }
+  .cart-items-list { display: flex; flex-direction: column; gap: 1.5rem; }
+  .cart-item {
+    display: grid; grid-template-columns: 80px 1fr auto;
+    gap: 1.5rem; align-items: center;
+    background: var(--white); padding: 1.5rem;
+    border: 1px solid var(--soft-gray);
+  }
+  .cart-item-icon {
+    width: 80px; height: 80px;
+    background: var(--soft-gray);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.2rem; flex-shrink: 0;
+  }
+  .cart-item-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem;
+  }
+  .cart-item-cat { font-size: 0.72rem; color: var(--warm-brown); letter-spacing: 0.1em; text-transform: uppercase; }
+  .cart-item-controls {
+    display: flex; align-items: center; gap: 0.8rem; margin-top: 0.8rem;
+  }
+  .qty-btn {
+    width: 28px; height: 28px;
+    background: var(--soft-gray); border: none; cursor: pointer;
+    font-size: 1rem; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .qty-btn:hover { background: var(--charcoal); color: var(--cream); }
+  .qty-num { font-weight: 600; font-size: 0.9rem; min-width: 20px; text-align: center; }
+  .remove-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--error); font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-left: 1rem; transition: opacity 0.2s;
+  }
+  .remove-btn:hover { opacity: 0.6; }
+  .cart-item-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 700; white-space: nowrap;
+  }
+
+  .cart-summary {
+    background: var(--white); border: 1px solid var(--soft-gray);
+    padding: 2rem; position: sticky; top: 100px;
+  }
+  .cart-summary h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem;
+    padding-bottom: 1rem; border-bottom: 1px solid var(--soft-gray);
+  }
+  .summary-row {
+    display: flex; justify-content: space-between;
+    margin-bottom: 0.8rem; font-size: 0.9rem;
+  }
+  .summary-row.total {
+    font-weight: 700; font-size: 1.1rem;
+    padding-top: 1rem; border-top: 1px solid var(--soft-gray);
+    margin-top: 1rem;
+  }
+  .cart-summary .btn-primary { width: 100%; text-align: center; margin-top: 1.5rem; }
+
+  .empty-cart {
+    text-align: center; padding: 5rem 2rem;
+    grid-column: 1 / -1;
+  }
+  .empty-cart-icon { font-size: 5rem; margin-bottom: 1rem; opacity: 0.3; }
+  .empty-cart h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .empty-cart p { color: var(--text-muted); margin-bottom: 2rem; }
+
+  /* ─── CHECKOUT FORM ─── */
+  .checkout-layout {
+    display: grid; grid-template-columns: 1fr 360px;
+    gap: 3rem; padding: 4rem 5rem; align-items: start;
+  }
+  .form-section { background: var(--white); padding: 2.5rem; border: 1px solid var(--soft-gray); margin-bottom: 1.5rem; }
+  .form-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 700;
+    margin-bottom: 1.5rem; padding-bottom: 1rem;
+    border-bottom: 1px solid var(--soft-gray);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .form-group { display: flex; flex-direction: column; margin-bottom: 1rem; }
+  .form-group label {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--charcoal);
+    margin-bottom: 0.4rem;
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 0.8rem 1rem;
+    border: 1.5px solid var(--soft-gray);
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; color: var(--charcoal);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--gold);
+  }
+  .form-group input.error { border-color: var(--error); }
+  .field-error { font-size: 0.72rem; color: var(--error); margin-top: 0.3rem; }
+
+  .card-icons { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; }
+  .card-icon {
+    padding: 0.3rem 0.6rem;
+    background: var(--soft-gray); border-radius: 3px;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em;
+  }
+
+  .order-review { background: var(--white); border: 1px solid var(--soft-gray); padding: 2rem; position: sticky; top: 100px; }
+  .order-review h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--soft-gray); }
+  .order-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.85rem; }
+  .order-item-info { display: flex; align-items: center; gap: 0.8rem; }
+  .order-item-icon { font-size: 1.4rem; }
+  .order-item-name { font-weight: 500; }
+  .order-item-qty { color: var(--text-muted); font-size: 0.75rem; }
+
+  /* ─── THANK YOU ─── */
+  .thankyou-page {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--cream) 0%, #EDE3D0 100%);
+  }
+  .thankyou-card {
+    background: var(--white); border: 1px solid var(--soft-gray);
+    padding: 4rem; max-width: 600px; width: 90%; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .thankyou-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+    background: linear-gradient(90deg, var(--gold), var(--warm-brown));
+  }
+  .ty-icon { font-size: 4rem; margin-bottom: 1.5rem; display: block; }
+  .ty-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem;
+  }
+  .ty-sub { color: #666; line-height: 1.7; margin-bottom: 2.5rem; font-size: 0.95rem; }
+  .ty-order {
+    background: var(--cream); border: 1px solid var(--soft-gray);
+    padding: 1.5rem; margin-bottom: 2.5rem;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+  }
+  .ty-stat label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--warm-brown); display: block; margin-bottom: 0.3rem; }
+  .ty-stat span { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
+
+  /* ─── CONTACT PAGE ─── */
+  .contact-layout {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0; min-height: calc(100vh - 80px);
+  }
+  .contact-info {
+    background: var(--charcoal); color: var(--cream);
+    padding: 6rem 4rem; display: flex; flex-direction: column; justify-content: center;
+  }
+  .contact-info .section-label { color: var(--gold); }
+  .contact-info h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; margin-bottom: 1.5rem; }
+  .contact-info p { color: rgba(245,240,232,0.7); line-height: 1.8; margin-bottom: 3rem; }
+  .contact-details { display: flex; flex-direction: column; gap: 1.5rem; }
+  .contact-item { display: flex; gap: 1rem; align-items: flex-start; }
+  .contact-item-icon { font-size: 1.3rem; margin-top: 0.1rem; flex-shrink: 0; }
+  .contact-item-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.2rem; }
+  .contact-item-value { font-size: 0.9rem; color: rgba(245,240,232,0.8); }
+
+  .contact-form-area {
+    background: var(--cream); padding: 6rem 4rem;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .contact-form-area h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .contact-form-area p { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem; }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
+    background: var(--charcoal); color: var(--cream);
+    padding: 1rem 1.8rem;
+    font-size: 0.85rem; font-weight: 500;
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex; align-items: center; gap: 0.7rem;
+    border-left: 4px solid var(--gold);
+    max-width: 320px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--charcoal); color: rgba(245,240,232,0.6);
+    padding: 3rem 5rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 900; color: var(--cream);
+  }
+  .footer-logo span { color: var(--gold); }
+  footer p { font-size: 0.78rem; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1.2rem; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-visual { min-height: 300px; }
+    section { padding: 4rem 1.5rem; }
+    .cart-layout, .checkout-layout { grid-template-columns: 1fr; padding: 2rem 1.5rem; }
+    .contact-layout { grid-template-columns: 1fr; }
+    .page-header { padding: 7rem 1.5rem 3rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
+    .hero-text { padding: 3rem 1.5rem; }
+    .ty-order { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ─── -->
+<nav>
+  <a class="nav-logo" onclick="showPage('shop')" href="#"><span>L</span>UMINARY</a>
+  <ul class="nav-links">
+    <li><button onclick="showPage('shop')">Shop</button></li>
+    <li><button onclick="showPage('contact')">Contact</button></li>
+    <li>
+      <button class="cart-btn" onclick="showPage('cart')">
+        🛍 Cart
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </li>
+  </ul>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: SHOP
+══════════════════════════════════════════════════ -->
+<div class="page active" id="page-shop">
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-text">
+      <p class="hero-eyebrow">✦ New Collection 2025</p>
+      <h1 class="hero-title">Curated for <em>those who</em> know.</h1>
+      <p class="hero-sub">Premium goods crafted with intention. Each piece tells a story — yours starts here.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now</button>
+        <button class="btn-outline" onclick="showPage('contact')">Contact Us</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-visual-big">LUMINARY</div>
+      <div class="hero-product-cards">
+        <div class="mini-card"><div class="mini-card-icon">🕯️</div><div class="mini-card-name">Candles</div></div>
+        <div class="mini-card"><div class="mini-card-icon">🌿</div><div class="mini-card-name">Botanicals</div></div>
+        <div class="mini-card"><div class="mini-card-icon">🧴</div><div class="mini-card-name">Skincare</div></div>
+        <div class="mini-card"><div class="mini-card-icon">💎</div><div class="mini-card-name">Jewelry</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products -->
+  <section id="products">
+    <p class="section-label">Our Collection</p>
+    <h2 class="section-title">Handpicked for you</h2>
+    <div class="products-grid" id="productsGrid"></div>
+  </section>
+
+  <footer>
+    <div class="footer-logo"><span>L</span>UMINARY</div>
+    <p>© 2025 Luminary Store. All rights reserved.</p>
+    <p>Made with ♥ &amp; intention</p>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: CART
+══════════════════════════════════════════════════ -->
+<div class="page" id="page-cart">
+  <div class="page-header">
+    <p class="section-label">✦ Your Selection</p>
+    <h1>Shopping Cart</h1>
+  </div>
+  <div class="cart-layout">
+    <div id="cartItemsList"></div>
+    <div class="cart-summary" id="cartSummaryBox">
+      <h3>Order Summary</h3>
+      <div class="summary-row"><span>Subtotal</span><span id="summarySubtotal">$0.00</span></div>
+      <div class="summary-row"><span>Shipping</span><span id="summaryShipping">$0.00</span></div>
+      <div class="summary-row"><span>Tax (8%)</span><span id="summaryTax">$0.00</span></div>
+      <div class="summary-row total"><span>Total</span><span id="summaryTotal">$0.00</span></div>
+      <button class="btn-primary" onclick="showPage('checkout')" style="width:100%;text-align:center;margin-top:1.5rem;" id="checkoutBtn">Proceed to Checkout</button>
+      <button class="btn-outline" onclick="showPage('shop')" style="width:100%;text-align:center;margin-top:0.8rem;">Continue Shopping</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: CHECKOUT
+══════════════════════════════════════════════════ -->
+<div class="page" id="page-checkout">
+  <div class="page-header">
+    <p class="section-label">✦ Almost there</p>
+    <h1>Checkout</h1>
+  </div>
+  <div class="checkout-layout">
+    <div>
+      <!-- Contact Info -->
+      <div class="form-section">
+        <h3>Contact Information</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name *</label>
+            <input type="text" id="firstName" placeholder="Jane">
+            <span class="field-error" id="err-firstName"></span>
+          </div>
+          <div class="form-group">
+            <label>Last Name *</label>
+            <input type="text" id="lastName" placeholder="Doe">
+            <span class="field-error" id="err-lastName"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address *</label>
+          <input type="email" id="email" placeholder="jane@example.com">
+          <span class="field-error" id="err-email"></span>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="phone" placeholder="+1 (555) 000-0000">
+        </div>
+      </div>
+
+      <!-- Shipping -->
+      <div class="form-section">
+        <h3>Shipping Address</h3>
+        <div class="form-group">
+          <label>Street Address *</label>
+          <input type="text" id="address" placeholder="123 Main Street">
+          <span class="field-error" id="err-address"></span>
+        </div>
+        <div class="form-group">
+          <label>Apartment / Suite</label>
+          <input type="text" id="apt" placeholder="Apt 4B (optional)">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City *</label>
+            <input type="text" id="city" placeholder="New York">
+            <span class="field-error" id="err-city"></span>
+          </div>
+          <div class="form-group">
+            <label>State *</label>
+            <select id="state">
+              <option value="">Select state…</option>
+              <option>Alabama</option><option>Alaska</option><option>Arizona</option>
+              <option>California</option><option>Colorado</option><option>Florida</option>
+              <option>Georgia</option><option>Illinois</option><option>New York</option>
+              <option>Texas</option><option>Washington</option>
+            </select>
+            <span class="field-error" id="err-state"></span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>ZIP Code *</label>
+            <input type="text" id="zip" placeholder="10001">
+            <span class="field-error" id="err-zip"></span>
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <select id="country">
+              <option>United States</option>
+              <option>Canada</option>
+              <option>United Kingdom</option>
+              <option>Australia</option>
+              <option>India</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment -->
+      <div class="form-section">
+        <h3>Payment Details</h3>
+        <div class="card-icons">
+          <span class="card-icon">VISA</span>
+          <span class="card-icon">MC</span>
+          <span class="card-icon">AMEX</span>
+          <span class="card-icon">PAYPAL</span>
+        </div>
+        <div class="form-group">
+          <label>Card Number *</label>
+          <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+          <span class="field-error" id="err-cardNumber"></span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Expiry Date *</label>
+            <input type="text" id="expiry" placeholder="MM / YY" maxlength="7">
+            <span class="field-error" id="err-expiry"></span>
+          </div>
+          <div class="form-group">
+            <label>CVV *</label>
+            <input type="text" id="cvv" placeholder="123" maxlength="4">
+            <span class="field-error" id="err-cvv"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Name on Card *</label>
+          <input type="text" id="cardName" placeholder="Jane Doe">
+          <span class="field-error" id="err-cardName"></span>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="submitOrder()" style="width:100%;padding:1.1rem;font-size:0.95rem;">
+        Place Order →
+      </button>
+    </div>
+
+    <!-- Order Review -->
+    <div class="order-review" id="orderReview">
+      <h3>Your Order</h3>
+      <div id="orderReviewItems"></div>
+      <div style="border-top:1px solid var(--soft-gray);padding-top:1rem;margin-top:1rem;">
+        <div class="summary-row"><span>Subtotal</span><span id="reviewSubtotal">$0.00</span></div>
+        <div class="summary-row"><span>Shipping</span><span id="reviewShipping">$0.00</span></div>
+        <div class="summary-row"><span>Tax</span><span id="reviewTax">$0.00</span></div>
+        <div class="summary-row total"><span>Total</span><span id="reviewTotal">$0.00</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: THANK YOU
+══════════════════════════════════════════════════ -->
+<div class="page" id="page-thankyou">
+  <div class="thankyou-page">
+    <div class="thankyou-card">
+      <span class="ty-icon">✅</span>
+      <h1 class="ty-title">Order Confirmed!</h1>
+      <p class="ty-sub">Thank you for your purchase. Your order has been received and is now being prepared with the greatest care. You'll receive a confirmation email shortly.</p>
+      <div class="ty-order">
+        <div class="ty-stat">
+          <label>Order #</label>
+          <span id="orderNum">—</span>
+        </div>
+        <div class="ty-stat">
+          <label>Est. Delivery</label>
+          <span id="estDelivery">—</span>
+        </div>
+        <div class="ty-stat">
+          <label>Total Paid</label>
+          <span id="tyTotal">—</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:1rem;justify-content:center;">
+        <button class="btn-primary" onclick="continueShopping()">Continue Shopping</button>
+        <button class="btn-outline" onclick="showPage('contact')">Contact Support</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: CONTACT
+══════════════════════════════════════════════════ -->
+<div class="page" id="page-contact">
+  <div style="padding-top:80px;">
+    <div class="contact-layout">
+      <div class="contact-info">
+        <p class="section-label">✦ Get in Touch</p>
+        <h2>We'd love to hear from you.</h2>
+        <p>Whether you have questions about our products, need styling advice, or want to discuss a special order — our team is ready to help.</p>
+        <div class="contact-details">
+          <div class="contact-item">
+            <span class="contact-item-icon">📍</span>
+            <div>
+              <div class="contact-item-label">Our Studio</div>
+              <div class="contact-item-value">123 Artisan Lane, New York, NY 10001</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-item-icon">✉️</span>
+            <div>
+              <div class="contact-item-label">Email Us</div>
+              <div class="contact-item-value">hello@luminarystore.com</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-item-icon">📞</span>
+            <div>
+              <div class="contact-item-label">Call Us</div>
+              <div class="contact-item-value">+1 (555) 234-5678</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-item-icon">🕐</span>
+            <div>
+              <div class="contact-item-label">Hours</div>
+              <div class="contact-item-value">Mon–Fri 9am–6pm EST</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-area">
+        <h3>Send a Message</h3>
+        <p>We typically respond within 24 hours.</p>
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="cName" placeholder="Your name">
+          <span class="field-error" id="err-cName"></span>
+        </div>
+        <div class="form-group">
+          <label>Email Address *</label>
+          <input type="email" id="cEmail" placeholder="you@example.com">
+          <span class="field-error" id="err-cEmail"></span>
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="cSubject">
+            <option>General Inquiry</option>
+            <option>Order Support</option>
+            <option>Product Question</option>
+            <option>Returns & Exchanges</option>
+            <option>Wholesale</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message *</label>
+          <textarea id="cMessage" rows="5" placeholder="Tell us how we can help…"></textarea>
+          <span class="field-error" id="err-cMessage"></span>
+        </div>
+        <button class="btn-primary" onclick="submitContact()" style="width:100%;padding:1rem;">Send Message →</button>
+        <div id="contactSuccess" style="display:none;background:#e8f5e9;border:1px solid #c8e6c9;padding:1rem;margin-top:1rem;color:#2e7d32;font-size:0.88rem;">
+          ✅ Message sent! We'll get back to you within 24 hours.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ─── JAVASCRIPT ─── -->
+<script>
+// ── PRODUCTS DATA ──
+const products = [
+  { id:1, name:'Amber Dusk Candle', cat:'Candles', price:34, icon:'🕯️', desc:'Hand-poured soy wax with notes of amber, sandalwood, and vanilla.', badge:'Bestseller', bg:'#FFF3E0' },
+  { id:2, name:'Rose Quartz Serum', cat:'Skincare', price:68, icon:'🧴', desc:'Brightening vitamin C serum with rose hip oil and hyaluronic acid.', badge:'New', bg:'#FCE4EC' },
+  { id:3, name:'Wildflower Botanical', cat:'Botanicals', price:28, icon:'🌿', desc:'Dried wildflower arrangement in a sustainable bamboo vessel.', badge:null, bg:'#E8F5E9' },
+  { id:4, name:'Gold Leaf Pendant', cat:'Jewelry', price:89, icon:'💎', desc:'Delicate 14k gold-filled leaf pendant on a fine chain.', badge:'Limited', bg:'#FFFDE7' },
+  { id:5, name:'Cedar & Sage Bundle', cat:'Botanicals', price:22, icon:'🌱', desc:'Ethically sourced smudge bundle with white sage and cedar tips.', badge:null, bg:'#E0F2F1' },
+  { id:6, name:'Midnight Clay Mask', cat:'Skincare', price:44, icon:'🫙', desc:'Detoxifying kaolin clay mask with activated charcoal and aloe.', badge:'New', bg:'#F3E5F5' },
+  { id:7, name:'Vetiver Noir Candle', cat:'Candles', price:38, icon:'🕯️', desc:'Luxury soy-coconut blend with vetiver, oud, and black pepper.', badge:null, bg:'#EFEBE9' },
+  { id:8, name:'Crystal Bead Bracelet', cat:'Jewelry', price:55, icon:'📿', desc:'Hand-knotted amethyst and clear quartz on silk cord.', badge:'Bestseller', bg:'#EDE7F6' },
+];
+
+let cart = [];
+
+// ── RENDER PRODUCTS ──
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = products.map(p => `
+    <div class="product-card">
+      <div class="product-img" style="background:${p.bg}">
+        ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
+        <span style="font-size:4.5rem">${p.icon}</span>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <span class="product-price">$${p.price}</span>
+          <button class="add-to-cart" id="btn-${p.id}" onclick="addToCart(${p.id})">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── CART LOGIC ──
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  const existing = cart.find(i => i.id === id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ ...product, qty: 1 });
+  }
+  updateCartCount();
+  const btn = document.getElementById('btn-' + id);
+  btn.textContent = '✓ Added';
+  btn.classList.add('added');
+  setTimeout(() => { btn.textContent = 'Add to Cart'; btn.classList.remove('added'); }, 1500);
+  showToast(`${product.icon} ${product.name} added to cart`);
+}
+
+function updateCartCount() {
+  const total = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cartCount').textContent = total;
+}
+
+function renderCart() {
+  const list = document.getElementById('cartItemsList');
+  if (cart.length === 0) {
+    list.innerHTML = `
+      <div class="empty-cart">
+        <div class="empty-cart-icon">🛍</div>
+        <h3>Your cart is empty</h3>
+        <p>Looks like you haven't added anything yet.</p>
+        <button class="btn-primary" onclick="showPage('shop')">Start Shopping</button>
+      </div>`;
+    document.getElementById('cartSummaryBox').style.display = 'none';
+  } else {
+    document.getElementById('cartSummaryBox').style.display = 'block';
+    list.innerHTML = cart.map(item => `
+      <div class="cart-item" id="ci-${item.id}">
+        <div class="cart-item-icon">${item.icon}</div>
+        <div>
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-cat">${item.cat}</div>
+          <div class="cart-item-controls">
+            <button class="qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+            <button class="remove-btn" onclick="removeItem(${item.id})">Remove</button>
+          </div>
+        </div>
+        <div class="cart-item-price">$${(item.price * item.qty).toFixed(2)}</div>
+      </div>
+    `).join('');
+    updateSummary('summary');
+  }
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeItem(id);
+  else { updateCartCount(); renderCart(); }
+}
+
+function removeItem(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateCartCount();
+  renderCart();
+}
+
+function getSubtotal() { return cart.reduce((s, i) => s + i.price * i.qty, 0); }
+function getShipping(sub) { return sub > 75 ? 0 : 9.99; }
+function getTax(sub) { return sub * 0.08; }
+
+function updateSummary(prefix) {
+  const sub = getSubtotal();
+  const ship = getShipping(sub);
+  const tax = getTax(sub);
+  document.getElementById(prefix+'Subtotal').textContent = '$'+sub.toFixed(2);
+  document.getElementById(prefix+'Shipping').textContent = ship === 0 ? 'FREE' : '$'+ship.toFixed(2);
+  document.getElementById(prefix+'Tax').textContent = '$'+tax.toFixed(2);
+  document.getElementById(prefix+'Total').textContent = '$'+(sub+ship+tax).toFixed(2);
+}
+
+function renderOrderReview() {
+  const items = document.getElementById('orderReviewItems');
+  items.innerHTML = cart.map(item => `
+    <div class="order-item">
+      <div class="order-item-info">
+        <span class="order-item-icon">${item.icon}</span>
+        <div>
+          <div class="order-item-name">${item.name}</div>
+          <div class="order-item-qty">Qty: ${item.qty}</div>
+        </div>
+      </div>
+      <span>$${(item.price * item.qty).toFixed(2)}</span>
+    </div>
+  `).join('');
+  updateSummary('review');
+}
+
+// ── FORM VALIDATION ──
+function clearErrors() {
+  document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+  document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+}
+
+function setError(id, msg) {
+  const el = document.getElementById('err-'+id);
+  const inp = document.getElementById(id);
+  if (el) el.textContent = msg;
+  if (inp) inp.classList.add('error');
+}
+
+function submitOrder() {
+  clearErrors();
+  let valid = true;
+  const required = [
+    { id:'firstName', label:'First name' },
+    { id:'lastName', label:'Last name' },
+    { id:'email', label:'Email', pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, msg:'Please enter a valid email' },
+    { id:'address', label:'Address' },
+    { id:'city', label:'City' },
+    { id:'state', label:'State' },
+    { id:'zip', label:'ZIP', pattern:/^\d{5}(-\d{4})?$/, msg:'Enter a valid ZIP code' },
+    { id:'cardNumber', label:'Card number' },
+    { id:'expiry', label:'Expiry' },
+    { id:'cvv', label:'CVV' },
+    { id:'cardName', label:'Name on card' },
+  ];
+  required.forEach(f => {
+    const val = document.getElementById(f.id)?.value.trim();
+    if (!val) { setError(f.id, f.label + ' is required'); valid = false; }
+    else if (f.pattern && !f.pattern.test(val)) { setError(f.id, f.msg); valid = false; }
+  });
+  if (cart.length === 0) { showToast('Your cart is empty!'); return; }
+  if (!valid) { showToast('Please fix the errors above'); return; }
+
+  // Success
+  const sub = getSubtotal();
+  const total = sub + getShipping(sub) + getTax(sub);
+  document.getElementById('orderNum').textContent = '#LMN-' + Math.floor(Math.random()*90000+10000);
+  const d = new Date(); d.setDate(d.getDate() + 5);
+  document.getElementById('estDelivery').textContent = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  document.getElementById('tyTotal').textContent = '$' + total.toFixed(2);
+  cart = [];
+  updateCartCount();
+  showPage('thankyou');
+}
+
+function submitContact() {
+  clearErrors();
+  let valid = true;
+  if (!document.getElementById('cName').value.trim()) { setError('cName','Name is required'); valid=false; }
+  const em = document.getElementById('cEmail').value.trim();
+  if (!em) { setError('cEmail','Email is required'); valid=false; }
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { setError('cEmail','Enter a valid email'); valid=false; }
+  if (!document.getElementById('cMessage').value.trim()) { setError('cMessage','Message is required'); valid=false; }
+  if (!valid) return;
+  document.getElementById('contactSuccess').style.display = 'block';
+  ['cName','cEmail','cMessage'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ── CARD NUMBER FORMATTING ──
+document.addEventListener('DOMContentLoaded', () => {
+  const cn = document.getElementById('cardNumber');
+  if (cn) cn.addEventListener('input', e => {
+    let v = e.target.value.replace(/\D/g,'').substring(0,16);
+    e.target.value = v.replace(/(.{4})/g,'$1 ').trim();
+  });
+  const ex = document.getElementById('expiry');
+  if (ex) ex.addEventListener('input', e => {
+    let v = e.target.value.replace(/\D/g,'').substring(0,4);
+    if (v.length > 2) v = v.slice(0,2) + ' / ' + v.slice(2);
+    e.target.value = v;
+  });
+  renderProducts();
+});
+
+// ── PAGE NAVIGATION ──
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (name === 'cart') renderCart();
+  if (name === 'checkout') { if (cart.length === 0) { showPage('cart'); return; } renderOrderReview(); }
+  if (name === 'contact') { document.getElementById('contactSuccess').style.display = 'none'; }
+}
+
+function continueShopping() {
+  showPage('shop');
+  renderProducts();
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = '✦ ' + msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
